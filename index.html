@@ -1,41 +1,224 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Kiểm tra mã ẩn - Xóa mã ẩn</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kiểm tra mã ẩn - Xóa mã ẩn</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+    }
+    canvas#matrix {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: black;
+      display: block;
+    }
+    .app-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 480px;
+      max-width: 90vw;
+      background: #00ff00;
+      box-shadow:
+        0 0 8px #00ff00,
+        0 0 20px #00ff00,
+        0 0 30px #00ff00;
+      border-radius: 8px;
+      color: black;
+      z-index: 10;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+    }
+    .app-header {
+      font-weight: bold;
+      padding: 12px 20px;
+      font-size: 1.3rem;
+      letter-spacing: 1.5px;
+      border-bottom: 2px solid black;
+      background: #00aa00;
+      color: black;
+    }
+    .tabs {
+      display: flex;
+      background: #00ff00;
+      border-bottom: 2px solid black;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      border-right: 1px solid black;
+      color: black;
+      transition: background 0.3s ease;
+    }
+    .tab:last-child {
+      border-right: none;
+    }
+    .tab.active {
+      background: black;
+      color: #00ff00;
+    }
+    .tab-content {
+      padding: 20px;
+      background: black;
+      color: #00ff00;
+      font-size: 1rem;
+      min-height: 210px;
+      border-radius: 0 0 8px 8px;
+      box-shadow:
+        inset 0 0 10px #00ff00;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      letter-spacing: 1.2px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 1rem;
+      font-family: 'Share Tech Mono', monospace;
+      border: 2px solid #00ff00;
+      background: black;
+      color: #00ff00;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus {
+      border-color: #00ff00;
+      box-shadow: 0 0 8px #00ff00;
+    }
+    button {
+      background: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 10px 24px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      letter-spacing: 1.2px;
+      transition: background 0.3s ease, color 0.3s ease;
+      user-select: none;
+      width: 120px;
+      margin-top: 8px;
+    }
+    button:hover {
+      background: #00ff00;
+      color: black;
+    }
+    .result-box {
+      flex: 1;
+      border: 2px solid #00ff00;
+      border-radius: 6px;
+      padding: 14px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #00ff00;
+      background: black;
+      box-shadow: inset 0 0 10px #00ff00;
+      white-space: pre-line;
+      min-height: 210px;
+      overflow-y: auto;
+      margin-left: 20px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      text-align: left;
+    }
+    #checkCodeForm, #deleteCodeForm {
+      display: flex;
+      gap: 20px;
+    }
+    #gameForm {
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #gameForm label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      margin-bottom: 6px;
+      display: block;
+      color: #00ff00;
+    }
+    #gameInput {
+      width: 100%;
+      padding: 8px 12px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      color: #00ff00;
+      background: black;
+      border: 1.5px solid #00ff00;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    #gameInput:focus {
+      border-color: #00ff00;
+      box-shadow: 0 0 8px #00ff00;
+    }
+    #startBtn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      width: 80px;
+      padding: 6px 12px;
+      color: #00ff00;
+      background: black;
+      border: 1.5px solid #00ff00;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    #startBtn:hover {
+      background: #00ff00;
+      color: black;
+    }
+
+    @keyframes blinking {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .blinking-code {
+      font-weight: bold;
+      font-size: 1.2rem;
+      animation: blinking 1s infinite;
+      letter-spacing: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #ff0000;
+    }
+  </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
+  <canvas id="matrix"></canvas>
 
-<!-- Màn hình đăng nhập -->
-<div id="loginScreen" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-  <h2 id="loginTitle">ĐĂNG NHẬP</h2>
-  <form id="loginForm" autocomplete="off">
-    <input type="text" id="username" name="username" placeholder="Tài khoản" aria-label="Tài khoản" required />
-    <div style="position: relative; margin-bottom: 20px;">
-      <input type="password" id="password" name="password" placeholder="Mật khẩu" aria-label="Mật khẩu" required style="padding-right: 40px;" />
-      <span id="togglePassword" title="Hiển thị/ẩn mật khẩu" style="
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #00ff00;
-        font-size: 1.2rem;
-        user-select: none;
-        ">
-        👁️
-      </span>
-    </div>
-    <button type="submit">Đăng nhập</button>
-  </form>
-  <div id="loginError" role="alert" aria-live="assertive"></div>
-</div>
-
-<!-- Ứng dụng chính -->
-<div id="appWrapper">
   <div class="app-container" role="main" aria-label="Ứng dụng kiểm tra mã ẩn và cổng game">
     <header class="app-header">KIỂM TRA MÃ ẨN - XÓA MÃ ẨN</header>
     
@@ -48,35 +231,41 @@
     <!-- Tab 1 Kiểm tra mã ẩn -->
     <section id="tab-check-code" class="tab-content active" role="tabpanel" aria-labelledby="tab-check-code-btn">
       <form id="checkCodeForm" onsubmit="return false;">
-        <label for="phoneInput">Số điện thoại_</label>
-        <input type="text" id="phoneInput" name="phoneInput" autocomplete="off" />
-        
-        <label for="portInput">Cổng game_</label>
-        <input type="text" id="portInput" name="portInput" autocomplete="off" />
-        
-        <label for="accountInput">Tài khoản game_</label>
-        <input type="text" id="accountInput" name="accountInput" autocomplete="off" />
-        
-        <button id="startCheckCodeBtn" type="submit">START</button>
+        <div style="flex: 1; display: flex; flex-direction: column;">
+          <label for="phoneInput">Số điện thoại_</label>
+          <input type="text" id="phoneInput" name="phoneInput" autocomplete="off" />
+          
+          <label for="portInput">Cổng game_</label>
+          <input type="text" id="portInput" name="portInput" autocomplete="off" />
+          
+          <label for="accountInput">Tài khoản game_</label>
+          <input type="text" id="accountInput" name="accountInput" autocomplete="off" />
+          
+          <button id="startCheckCodeBtn" type="submit">START</button>
+        </div>
+
+        <div id="checkCodeResult" class="result-box" aria-live="polite" aria-atomic="true"></div>
       </form>
-      <div id="checkCodeResult" class="result-box" aria-live="polite" aria-atomic="true"></div>
     </section>
 
     <!-- Tab 2 Xóa mã ẩn -->
     <section id="tab-delete-code" class="tab-content" role="tabpanel" aria-labelledby="tab-delete-code-btn">
       <form id="deleteCodeForm" onsubmit="return false;">
-        <label for="phoneInputDel">Số điện thoại_</label>
-        <input type="text" id="phoneInputDel" name="phoneInputDel" autocomplete="off" />
-        
-        <label for="portInputDel">Cổng game_</label>
-        <input type="text" id="portInputDel" name="portInputDel" autocomplete="off" />
-        
-        <label for="accountInputDel">Tài khoản game_</label>
-        <input type="text" id="accountInputDel" name="accountInputDel" autocomplete="off" />
-        
-        <button id="startDeleteCodeBtn" type="submit">START</button>
+        <div style="flex: 1; display: flex; flex-direction: column;">
+          <label for="phoneInputDel">Số điện thoại_</label>
+          <input type="text" id="phoneInputDel" name="phoneInputDel" autocomplete="off" />
+          
+          <label for="portInputDel">Cổng game_</label>
+          <input type="text" id="portInputDel" name="portInputDel" autocomplete="off" />
+          
+          <label for="accountInputDel">Tài khoản game_</label>
+          <input type="text" id="accountInputDel" name="accountInputDel" autocomplete="off" />
+          
+          <button id="startDeleteCodeBtn" type="submit">START</button>
+        </div>
+
+        <div id="deleteCodeResult" class="result-box" aria-live="polite" aria-atomic="true"></div>
       </form>
-      <div id="deleteCodeResult" class="result-box" aria-live="polite" aria-atomic="true"></div>
     </section>
 
     <!-- Tab 3 Kiểm tra cổng game -->
@@ -86,11 +275,231 @@
         <input type="text" id="gameInput" name="gameInput" autocomplete="off" />
         <button type="submit" id="startBtn">START</button>
       </form>
-      <div class="result-box" id="resultBox" aria-live="polite" aria-atomic="true"></div>
+      <div class="result-box" id="resultBox" aria-live="polite" aria-atomic="true" style="justify-content: flex-start; align-items: flex-start; text-align: left;">
+      </div>
     </section>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <script>
+    // Chuyển tab
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+          t.setAttribute('tabindex', '-1');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        tab.setAttribute('tabindex', '0');
+
+        const id = tab.getAttribute('aria-controls');
+        tabContents.forEach(c => {
+          c.classList.remove('active');
+          if (c.id === id) c.classList.add('active');
+        });
+      });
+    });
+
+    // Hàm tạo dãy mã ẩn 10 ký tự chữ hoa và số
+    function generateRandomCode(length = 10) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let result = '';
+      for(let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+
+    // Xử lý Tab 1 START
+    const checkCodeForm = document.getElementById('checkCodeForm');
+    const phoneInput = document.getElementById('phoneInput');
+    const portInput = document.getElementById('portInput');
+    const accountInput = document.getElementById('accountInput');
+    const checkCodeResult = document.getElementById('checkCodeResult');
+
+    checkCodeForm.addEventListener('submit', () => {
+      const phone = phoneInput.value.trim();
+      const port = portInput.value.trim();
+      const account = accountInput.value.trim();
+
+      if (!/^0\d{9}$/.test(phone)) {
+        checkCodeResult.textContent = 'Số điện thoại không hợp lệ! (bắt đầu bằng 0 và đủ 10 số)';
+        return;
+      }
+      if (port.length < 3 || /[^a-zA-Z0-9]/.test(port)) {
+        checkCodeResult.textContent = 'Cổng game phải có ít nhất 3 ký tự, không dấu, chỉ chữ và số.';
+        return;
+      }
+      if (account.length < 4 || /[^a-zA-Z0-9]/.test(account)) {
+        checkCodeResult.textContent = 'Tài khoản game phải có ít nhất 4 ký tự, không dấu, gồm chữ và số.';
+        return;
+      }
+
+      let countdown = 5;
+      checkCodeResult.textContent = `Đang xử lý... ${countdown}s`;
+
+      const intervalId = setInterval(() => {
+        countdown--;
+        if(countdown > 0) {
+          checkCodeResult.textContent = `Đang xử lý... ${countdown}s`;
+        } else {
+          clearInterval(intervalId);
+          if (port.toUpperCase() === 'UU88') {
+            checkCodeResult.innerHTML = `
+              Kiểm tra thành công:<br>
+              - Số điện thoại: ${phone}<br>
+              - Cổng game: ${port}<br>
+              - Tài khoản game: ${account}<br><br>
+              <strong style="color:#00ff00;">TÀI KHOẢN KHÔNG CHỨA MÃ ẨN</strong>
+            `;
+          } else {
+            const hiddenCode = generateRandomCode();
+            checkCodeResult.innerHTML = `
+              <strong style="color:#ff0000;">CẢNH BÁO<br>
+              TÀI KHOẢN CHỨA MÃ ẨN</strong><br><br>
+              <span class="blinking-code">${hiddenCode}</span> 💀
+            `;
+          }
+        }
+      }, 1000);
+    });
+
+    // Xử lý Tab 2 START
+    const deleteCodeForm = document.getElementById('deleteCodeForm');
+    const phoneInputDel = document.getElementById('phoneInputDel');
+    const portInputDel = document.getElementById('portInputDel');
+    const accountInputDel = document.getElementById('accountInputDel');
+    const deleteCodeResult = document.getElementById('deleteCodeResult');
+
+    deleteCodeForm.addEventListener('submit', () => {
+      const phone = phoneInputDel.value.trim();
+      const port = portInputDel.value.trim();
+      const account = accountInputDel.value.trim();
+
+      if (!/^0\d{9}$/.test(phone)) {
+        deleteCodeResult.textContent = 'Số điện thoại không hợp lệ! (bắt đầu bằng 0 và đủ 10 số)';
+        return;
+      }
+      if (port.length < 3 || /[^a-zA-Z0-9]/.test(port)) {
+        deleteCodeResult.textContent = 'Cổng game phải có ít nhất 3 ký tự, không dấu, chỉ chữ và số.';
+        return;
+      }
+      if (account.length < 4 || /[^a-zA-Z0-9]/.test(account)) {
+        deleteCodeResult.textContent = 'Tài khoản game phải có ít nhất 4 ký tự, không dấu, gồm chữ và số.';
+        return;
+      }
+
+      let countdown = 5;
+      deleteCodeResult.textContent = `Đang xử lý... ${countdown}s`;
+
+      const intervalId = setInterval(() => {
+        countdown--;
+        if(countdown > 0) {
+          deleteCodeResult.textContent = `Đang xử lý... ${countdown}s`;
+        } else {
+          clearInterval(intervalId);
+          if (port.toUpperCase() === 'UU88') {
+            deleteCodeResult.innerHTML = `
+              <strong style="color:#00ff00;">
+                THÔNG BÁO,<br>
+                TÀI KHOẢN KHÔNG CHỨA MÃ ẨN
+              </strong>
+            `;
+          } else {
+            deleteCodeResult.innerHTML = `
+              <strong style="color:#ff0000;">
+                CẢNH BÁO,<br>
+                KHÔNG THỂ XOÁ MÃ ẨN
+              </strong>
+            `;
+          }
+        }
+      }, 1000);
+    });
+
+    // Xử lý Tab 3 START với logic mới và kết quả căn trái
+    const gameForm = document.getElementById('gameForm');
+    const gameInput = document.getElementById('gameInput');
+    const resultBox = document.getElementById('resultBox');
+
+    function randomIntFromInterval(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    gameForm.addEventListener('submit', () => {
+      const gameCode = gameInput.value.trim();
+      if (!gameCode) {
+        resultBox.textContent = 'Vui lòng nhập cổng game!';
+        return;
+      }
+
+      let countdown = 5;
+      resultBox.textContent = `Đang xử lý... ${countdown}s`;
+
+      const intervalId = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          resultBox.textContent = `Đang xử lý... ${countdown}s`;
+        } else {
+          clearInterval(intervalId);
+          if (gameCode.toUpperCase() === 'UU88') {
+            const uyTin = randomIntFromInterval(95, 100);
+            resultBox.innerHTML = `
+              Vị trí : <strong>ABC VIP</strong><br>
+              % Uy tín : <strong>${uyTin}%</strong><br>
+              % Mã ẩn : <strong>0%</strong>
+            `;
+          } else {
+            const uyTin = randomIntFromInterval(30, 50);
+            const maAn = randomIntFromInterval(75, 99);
+            resultBox.innerHTML = `
+              Vị trí : <strong>Cambodia</strong><br>
+              % Uy tín : <strong>${uyTin}%</strong><br>
+              % Mã ẩn : <strong>${maAn}%</strong>
+            `;
+          }
+        }
+      }, 1000);
+    });
+
+    // Hiệu ứng ma trận
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    const letters = 'アァイィウヴエカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 14;
+    const columns = Math.floor(width / fontSize);
+    const drops = new Array(columns).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#00ff00';
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        drops[i]++;
+        if (drops[i] * fontSize > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+      }
+    }
+    setInterval(draw, 50);
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+  </script>
 </body>
 </html>
