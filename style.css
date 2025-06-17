@@ -1,183 +1,308 @@
-/* ========= Giao diện chung ========= */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 body {
   margin: 0;
+  background-color: #000;
+  color: #00ff00;
   font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
+}
+/* Màn hình đăng nhập */
+#loginScreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
   background: black;
-  color: #0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  flex-direction: column;
+  box-shadow:
+    0 0 20px #00ff00,
+    inset 0 0 40px #00ff00;
+}
+#loginScreen h2 {
+  color: #00ff00;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  letter-spacing: 3px;
+  text-align: center;
+  width: 100%;
+}
+#loginForm {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+#loginForm input[type="text"],
+#loginForm input[type="password"] {
+  background: black;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.1rem;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+}
+#loginForm input[type="text"]:focus,
+#loginForm input[type="password"]:focus {
+  box-shadow: 0 0 10px #00ff00;
+}
+#loginForm button {
+  background: black;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  letter-spacing: 2px;
+  font-size: 1.1rem;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+#loginForm button:hover {
+  background: #00ff00;
+  color: black;
+}
+#loginError {
+  color: #ff0000;
+  font-weight: bold;
+  margin-top: 10px;
+  min-height: 22px;
+  font-family: 'Share Tech Mono', monospace;
 }
 
-/* ========= Hiệu ứng Matrix Rain ========= */
+/* Ẩn app khi chưa đăng nhập */
+#appWrapper {
+  display: none;
+}
+
+/* Ứng dụng chính */
 canvas#matrix {
   position: fixed;
   top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background: black;
+  display: block;
 }
-
-/* ========= Form Đăng nhập ========= */
-#login-overlay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-box {
-  width: 320px;
-  padding: 20px;
-  box-sizing: border-box;
-  border: 2px solid #0f0;
-  margin: 0 20px;
-}
-
-.login-box h2 {
-  margin: 0 0 15px;
-  text-align: center;
-}
-
-.field {
+.app-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  max-width: 90vw;
+  background: #00ff00;
+  box-shadow:
+    0 0 8px #00ff00,
+    0 0 20px #00ff00,
+    0 0 30px #00ff00;
+  border-radius: 8px;
+  color: black;
+  z-index: 10;
+  user-select: none;
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
+  padding: 0;
 }
-
-.field label {
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-
-.field input {
-  width: 100%;
-  background: black;
-  color: #0f0;
-  border: 1px solid #0f0;
-  padding: 5px;
-  box-sizing: border-box;
-}
-
-.password-wrapper {
-  display: flex;
-}
-
-.password-wrapper input {
-  flex: 1;
-}
-
-.password-wrapper #togglePass {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  cursor: pointer;
-}
-
-/* Nút Đăng nhập */
-#login-btn {
-  width: 100%;
-  background: black;
-  color: #0f0;
-  border: 1px solid #0f0;
-  padding: 8px;
-  cursor: pointer;
-}
-
-#login-btn.enabled {
-  border-color: #fff;
-}
-
-.error-msg {
-  margin-top: 10px;
-  font-size: 13px;
-  color: #f33;
-  display: none;
-}
-
-/* ========= Cửa sổ Terminal ========= */
-.terminal-window {
-  max-width: 900px;
-  margin: 30px auto;
-  padding: 20px;
-  border: 2px solid #0f0;
-  box-sizing: border-box;
-}
-
-/* Tiêu đề */
-.title-bar .title {
+.app-header {
   font-weight: bold;
-  margin-bottom: 15px;
-}
-
-/* Tabs */
-.tabs {
-  margin-bottom: 15px;
-}
-
-.tab {
-  cursor: pointer;
-  padding: 5px 10px;
-  display: inline-block;
-  border: 1px solid #0f0;
-  margin-right: 8px;
-  box-sizing: border-box;
-}
-
-.tab.active {
-  background: #0f0;
+  padding: 12px 20px;
+  font-size: 1.3rem;
+  letter-spacing: 1.5px;
+  border-bottom: 2px solid black;
+  background: #00aa00;
   color: black;
 }
-
-/* ========= Nội dung Tab ========= */
-.tab-content {
-  display: none;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
+.tabs {
+  display: flex;
+  background: #00ff00;
+  border-bottom: 2px solid black;
 }
-
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  border-right: 1px solid black;
+  color: black;
+  transition: background 0.3s ease;
+}
+.tab:last-child {
+  border-right: none;
+}
+.tab.active {
+  background: black;
+  color: #00ff00;
+}
+.tab-content {
+  padding: 20px;
+  background: black;
+  color: #00ff00;
+  font-size: 1rem;
+  min-height: 250px;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    inset 0 0 10px #00ff00;
+  display: none;
+  gap: 20px;
+}
 .tab-content.active {
   display: flex;
 }
-
-/* Input và Button trong Tab */
-.tab-content input {
-  flex: 1;
-  min-width: 150px;
-  background: black;
-  color: #0f0;
-  border: 1px solid #0f0;
-  padding: 5px;
-  box-sizing: border-box;
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  letter-spacing: 1.2px;
 }
-
-.tab-content button {
-  flex-shrink: 0;
-  background: black;
-  color: #0f0;
-  border: 1px solid #0f0;
-  padding: 0 12px;
-  height: calc(1.5em + 10px);
-  cursor: pointer;
-}
-
-/* Khu vực hiển thị kết quả/countdown */
-#ip-display1, #ip-display2 {
+input[type="text"] {
   width: 100%;
-  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-family: 'Share Tech Mono', monospace;
+  border: 2px solid #00ff00;
+  background: black;
+  color: #00ff00;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  outline: none;
+  transition: border-color 0.3s ease;
 }
-
-#countdown-display1,
-#countdown-display2,
-#countdown-display3 {
-  margin-top: 5px;
+input[type="text"]:focus {
+  border-color: #00ff00;
+  box-shadow: 0 0 8px #00ff00;
 }
-
-/* Hiệu ứng nhấp nháy mã ẩn */
-.blink {
-  animation: blink 1s steps(2, start) infinite;
+button {
+  background: black;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  padding: 10px 24px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  letter-spacing: 1.2px;
+  transition: background 0.3s ease, color 0.3s ease;
+  user-select: none;
+  width: 120px;
+  margin-top: 8px;
 }
-
-@keyframes blink {
-  to {
-    visibility: hidden;
-  }
+button:hover {
+  background: #00ff00;
+  color: black;
+}
+/* Tab 1 & 2 form container */
+#tab-check-code form,
+#tab-delete-code form {
+  display: flex;
+  flex-direction: column;
+  max-width: 210px;
+}
+/* Result box for tab 1 and 2 */
+#checkCodeResult, #deleteCodeResult {
+  flex: 1;
+  border: 2px solid #00ff00;
+  border-radius: 6px;
+  padding: 14px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #00ff00;
+  background: black;
+  box-shadow: inset 0 0 10px #00ff00;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.1rem;
+  white-space: pre-line;
+  min-height: 230px;
+  flex-direction: column;
+}
+/* Tab 3 styles */
+#tab-check-game {
+  flex-direction: column;
+}
+#tab-check-game form {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+#tab-check-game label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #00ff00;
+}
+#gameInput {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  color: #00ff00;
+  background: black;
+  border: 2px solid #00ff00;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+#gameInput:focus {
+  border-color: #00ff00;
+  box-shadow: 0 0 12px #00ff00;
+}
+#startBtn {
+  width: 140px;
+  padding: 12px 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #00ff00;
+  background: black;
+  border: 2px solid #00ff00;
+  border-radius: 6px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+#startBtn:hover {
+  background: #00ff00;
+  color: black;
+}
+#resultBox {
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  padding: 20px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #00ff00;
+  background: black;
+  box-shadow: inset 0 0 14px #00ff00;
+  white-space: pre-line;
+  min-height: 150px;
+  max-height: 180px;
+  overflow-y: auto;
+  font-size: 15px;
+}
+@keyframes blinking {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.blinking-code {
+  font-weight: bold;
+  font-size: 1.4rem;
+  animation: blinking 1s infinite;
+  letter-spacing: 3px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #00ff00;
 }
