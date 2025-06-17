@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KIỂM TRA MÃ ẨN - XÓA MÃ ẨN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div id="login-overlay">
+    <div class="login-box">
+      <h2>Đăng nhập</h2>
+      <div class="field"><label>Tên đăng nhập</label><input id="login-user" type="text" /></div>
+      <div class="field">
+        <label>Mật khẩu</label>
+        <div class="password-wrapper">
+          <input id="login-pass" type="password" />
+          <span id="togglePass">👁️</span>
+        </div>
+      </div>
+      <button id="login-btn" disabled>Đăng nhập</button>
+      <div class="error-msg" id="login-error">Vui lòng điền đầy đủ thông tin</div>
+    </div>
+  </div>
+
+  <div class="terminal-window">
+    <div class="title-bar">
+      <div class="title">KIỂM TRA MÃ ẨN - XÓA MÃ ẨN</div>
+    </div>
+    <div class="tabs">
+      <span class="tab active" data-tab="tab1">Kiểm tra mã ẩn</span>
+      <span class="tab"        data-tab="tab2">Xóa mã ẩn</span>
+      <span class="tab"        data-tab="tab3">Kiểm tra cổng game</span>
+    </div>
+
+    <!-- Tab 1 -->
+    <div class="tab-content active" id="tab1">
+      <input id="phone" placeholder="Số điện thoại" />
+      <input id="game-port" placeholder="Cổng game" />
+      <input id="game-account" placeholder="Tài khoản game" />
+      <button id="start-btn1" disabled>START</button>
+      <div id="ip-display1"></div>
+      <div id="countdown-display1"></div>
+    </div>
+
+    <!-- Tab 2 -->
+    <div class="tab-content" id="tab2">
+      <input id="del-phone" placeholder="Số điện thoại" />
+      <input id="del-game-port" placeholder="Cổng game" />
+      <input id="del-game-account" placeholder="Tài khoản game" />
+      <button id="start-btn2" disabled>START</button>
+      <div id="ip-display2"></div>
+      <div id="countdown-display2"></div>
+    </div>
+
+    <!-- Tab 3 -->
+    <div class="tab-content" id="tab3">
+      <input id="check-port" placeholder="Cổng game" />
+      <button id="start-btn3" disabled>START</button>
+      <div id="countdown-display3"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
