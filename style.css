@@ -1,3 +1,4 @@
+/* ========= Giao diện chung ========= */
 body {
   margin: 0;
   font-family: 'Share Tech Mono', monospace;
@@ -5,6 +6,7 @@ body {
   color: #0f0;
 }
 
+/* ========= Hiệu ứng Matrix Rain ========= */
 canvas#matrix {
   position: fixed;
   top: 0; left: 0;
@@ -13,22 +15,169 @@ canvas#matrix {
   z-index: -1;
 }
 
-.terminal-window {
-  padding: 20px;
-  border: 2px solid #0f0;
-  margin: 20px;
+/* ========= Form Đăng nhập ========= */
+#login-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-input, button {
+.login-box {
+  width: 320px;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 2px solid #0f0;
+  margin: 0 20px;
+}
+
+.login-box h2 {
+  margin: 0 0 15px;
+  text-align: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.field label {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.field input {
+  width: 100%;
   background: black;
   color: #0f0;
   border: 1px solid #0f0;
-  margin: 5px;
   padding: 5px;
+  box-sizing: border-box;
 }
 
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+.password-wrapper {
+  display: flex;
+}
 
-.tab { cursor: pointer; padding: 5px; display: inline-block; }
-.tab.active { background: #0f0; color: black; }
+.password-wrapper input {
+  flex: 1;
+}
+
+.password-wrapper #togglePass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  cursor: pointer;
+}
+
+/* Nút Đăng nhập */
+#login-btn {
+  width: 100%;
+  background: black;
+  color: #0f0;
+  border: 1px solid #0f0;
+  padding: 8px;
+  cursor: pointer;
+}
+
+#login-btn.enabled {
+  border-color: #fff;
+}
+
+.error-msg {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #f33;
+  display: none;
+}
+
+/* ========= Cửa sổ Terminal ========= */
+.terminal-window {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  border: 2px solid #0f0;
+  box-sizing: border-box;
+}
+
+/* Tiêu đề */
+.title-bar .title {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Tabs */
+.tabs {
+  margin-bottom: 15px;
+}
+
+.tab {
+  cursor: pointer;
+  padding: 5px 10px;
+  display: inline-block;
+  border: 1px solid #0f0;
+  margin-right: 8px;
+  box-sizing: border-box;
+}
+
+.tab.active {
+  background: #0f0;
+  color: black;
+}
+
+/* ========= Nội dung Tab ========= */
+.tab-content {
+  display: none;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.tab-content.active {
+  display: flex;
+}
+
+/* Input và Button trong Tab */
+.tab-content input {
+  flex: 1;
+  min-width: 150px;
+  background: black;
+  color: #0f0;
+  border: 1px solid #0f0;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.tab-content button {
+  flex-shrink: 0;
+  background: black;
+  color: #0f0;
+  border: 1px solid #0f0;
+  padding: 0 12px;
+  height: calc(1.5em + 10px);
+  cursor: pointer;
+}
+
+/* Khu vực hiển thị kết quả/countdown */
+#ip-display1, #ip-display2 {
+  width: 100%;
+  margin-top: 10px;
+}
+
+#countdown-display1,
+#countdown-display2,
+#countdown-display3 {
+  margin-top: 5px;
+}
+
+/* Hiệu ứng nhấp nháy mã ẩn */
+.blink {
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
