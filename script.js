@@ -1,262 +1,372 @@
-// Xử lý đăng nhập
-const loginScreen = document.getElementById('loginScreen');
-const loginForm = document.getElementById('loginForm');
-const loginError = document.getElementById('loginError');
-const appWrapper = document.getElementById('appWrapper');
+// --- Constants ---
+const DEFAULT_PORTS = ['U888', 'J88', '88CLB', 'ABC8'];
+const CORRECT_USERNAME = 'funkaka'; // Updated username
+const CORRECT_PASSWORD = 'Aa123456'; // Updated password
 
-loginForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const username = loginForm.username.value.trim();
-  const password = loginForm.password.value.trim();
+// --- DOM Elements ---
+const loginOverlay = document.getElementById('login-overlay');
+const loginUser = document.getElementById('login-user');
+const loginPass = document.getElementById('login-pass');
+const togglePass = document.getElementById('togglePass');
+const loginBtn = document.getElementById('login-btn');
+const loginError = document.getElementById('login-error');
+const terminalWindow = document.querySelector('.terminal-window'); // Reference to the main terminal window
 
-  if (username === 'funkaka123' && password === '1Minhtao') {
-    // Đăng nhập thành công, ẩn màn hình login, hiện app
-    loginScreen.style.display = 'none';
-    appWrapper.style.display = 'block';
-  } else {
-    loginError.textContent = 'Tài khoản hoặc mật khẩu không đúng!';
-  }
-});
-
-// Hiển thị / ẩn mật khẩu khi nhấn icon con mắt
-const passwordInput = document.getElementById('password');
-const togglePassword = document.getElementById('togglePassword');
-
-togglePassword.addEventListener('click', () => {
-  const type = passwordInput.getAttribute('type');
-  if(type === 'password') {
-    passwordInput.setAttribute('type', 'text');
-    togglePassword.textContent = '🙈';
-  } else {
-    passwordInput.setAttribute('type', 'password');
-    togglePassword.textContent = '👁️';
-  }
-});
-
-// Chuyển tab
 const tabs = document.querySelectorAll('.tab');
 const tabContents = document.querySelectorAll('.tab-content');
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => {
-      t.classList.remove('active');
-      t.setAttribute('aria-selected', 'false');
-      t.setAttribute('tabindex', '-1');
-    });
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected', 'true');
-    tab.setAttribute('tabindex', '0');
 
-    const id = tab.getAttribute('aria-controls');
-    tabContents.forEach(c => {
-      c.classList.remove('active');
-      if (c.id === id) c.classList.add('active');
-    });
-  });
-});
+// Tab 1: Kiểm tra mã ẩn
+const phoneInput1 = document.getElementById('phone');
+const gamePortInput1 = document.getElementById('game-port');
+const gameAccountInput1 = document.getElementById('game-account');
+const startBtn1 = document.getElementById('start-btn1');
+const outputSection1 = document.getElementById('output-section1');
 
-// Hàm tạo dãy mã ẩn 10 ký tự chữ hoa và số
-function generateRandomCode(length = 10) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = '';
-  for(let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+// Tab 2: Xóa mã ẩn
+const phoneInput2 = document.getElementById('del-phone');
+const gamePortInput2 = document.getElementById('del-game-port');
+const gameAccountInput2 = document.getElementById('del-game-account');
+const startBtn2 = document.getElementById('start-btn2');
+const outputSection2 = document.getElementById('output-section2');
+
+// Tab 3: Kiểm tra cổng game
+const checkPortInput = document.getElementById('check-port');
+const startBtn3 = document.getElementById('start-btn3');
+const outputSection3 = document.getElementById('output-section3');
+
+// --- Utility Functions ---
+function validatePhone(phone) {
+    return /^0\d{9}$/.test(phone);
 }
 
-// Xử lý Tab 1 START
-const checkCodeForm = document.getElementById('checkCodeForm');
-const phoneInput = document.getElementById('phoneInput');
-const portInput = document.getElementById('portInput');
-const accountInput = document.getElementById('accountInput');
-const checkCodeResult = document.getElementById('checkCodeResult');
-
-checkCodeForm.addEventListener('submit', () => {
-  const phone = phoneInput.value.trim();
-  const port = portInput.value.trim();
-  const account = accountInput.value.trim();
-
-  if (!/^0\d{9}$/.test(phone)) {
-    checkCodeResult.textContent = 'Số điện thoại không hợp lệ! (bắt đầu bằng 0 và đủ 10 số)';
-    return;
-  }
-  if (port.length < 3 || /[^a-zA-Z0-9]/.test(port)) {
-    checkCodeResult.textContent = 'Cổng game phải có ít nhất 3 ký tự, không dấu, chỉ chữ và số.';
-    return;
-  }
-  if (account.length < 4 || /[^a-zA-Z0-9]/.test(account)) {
-    checkCodeResult.textContent = 'Tài khoản game phải có ít nhất 4 ký tự, không dấu, gồm chữ và số.';
-    return;
-  }
-
-  let countdown = 5;
-  checkCodeResult.textContent = `Đang xử lý... ${countdown}s`;
-
-  const intervalId = setInterval(() => {
-    countdown--;
-    if(countdown > 0) {
-      checkCodeResult.textContent = `Đang xử lý... ${countdown}s`;
-    } else {
-      clearInterval(intervalId);
-      if (port.toUpperCase() === 'UU88') {
-        checkCodeResult.innerHTML = `
-          <div class="blinking-code" style="font-weight:bold; font-size:1.4rem; letter-spacing: 3px;">
-            TÀI KHOẢN KHÔNG CHỨA MÃ ẨN
-          </div>
-        `;
-      } else {
-        const hiddenCode = generateRandomCode();
-        checkCodeResult.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px; color:#ff0000; font-weight:bold; font-size:1.2rem; letter-spacing: 1.5px;">
-            <span>CẢNH BÁO</span>
-            <span style="font-size:1.4rem;">💀</span>
-          </div>
-          <div style="color:#ff0000; font-weight:bold; font-size:1.1rem; margin-top: 6px; letter-spacing: 2px;">
-            TÀI KHOẢN CHỨA MÃ ẨN
-          </div>
-          <div class="blinking-code" style="margin-top: 12px; font-size: 1.4rem; letter-spacing: 4px;">
-            ${hiddenCode}
-          </div>
-        `;
-      }
-    }
-  }, 1000);
-});
-
-// Xử lý Tab 2 START
-const deleteCodeForm = document.getElementById('deleteCodeForm');
-const phoneInputDel = document.getElementById('phoneInputDel');
-const portInputDel = document.getElementById('portInputDel');
-const accountInputDel = document.getElementById('accountInputDel');
-const deleteCodeResult = document.getElementById('deleteCodeResult');
-
-deleteCodeForm.addEventListener('submit', () => {
-  const phone = phoneInputDel.value.trim();
-  const port = portInputDel.value.trim();
-  const account = accountInputDel.value.trim();
-
-  if (!/^0\d{9}$/.test(phone)) {
-    deleteCodeResult.textContent = 'Số điện thoại không hợp lệ! (bắt đầu bằng 0 và đủ 10 số)';
-    return;
-  }
-  if (port.length < 3 || /[^a-zA-Z0-9]/.test(port)) {
-    deleteCodeResult.textContent = 'Cổng game phải có ít nhất 3 ký tự, không dấu, chỉ chữ và số.';
-    return;
-  }
-  if (account.length < 4 || /[^a-zA-Z0-9]/.test(account)) {
-    deleteCodeResult.textContent = 'Tài khoản game phải có ít nhất 4 ký tự, không dấu, gồm chữ và số.';
-    return;
-  }
-
-  let countdown = 5;
-  deleteCodeResult.textContent = `Đang xử lý... ${countdown}s`;
-
-  const intervalId = setInterval(() => {
-    countdown--;
-    if(countdown > 0) {
-      deleteCodeResult.textContent = `Đang xử lý... ${countdown}s`;
-    } else {
-      clearInterval(intervalId);
-      if (port.toUpperCase() === 'UU88') {
-        deleteCodeResult.innerHTML = `
-          <strong style="color:#00ff00;">
-            THÔNG BÁO,<br>
-            TÀI KHOẢN KHÔNG CHỨA MÃ ẨN
-          </strong>
-        `;
-      } else {
-        deleteCodeResult.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px; color:#ff0000; font-weight:bold; font-size:1.2rem; letter-spacing: 1.5px;">
-            <span>CẢNH BÁO</span>
-            <span style="font-size:1.4rem;">💀</span>
-          </div>
-          <div style="color:#ff0000; font-weight:bold; font-size:1.1rem; margin-top: 6px; letter-spacing: 2px;">
-            KHÔNG THỂ XOÁ MÃ ẨN
-          </div>
-        `;
-      }
-    }
-  }, 1000);
-});
-
-// Xử lý Tab 3 START
-const gameForm = document.getElementById('gameForm');
-const gameInput = document.getElementById('gameInput');
-const resultBox = document.getElementById('resultBox');
-
-function randomIntFromInterval(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+function validateText(text) {
+    return /^[A-Za-z09]{4,}$/.test(text);
 }
 
-gameForm.addEventListener('submit', () => {
-  const gameCode = gameInput.value.trim();
-  if (!gameCode) {
-    resultBox.textContent = 'Vui lòng nhập cổng game!';
-    return;
-  }
+function generateRandomIP() {
+    return Array(4).fill().map(() => Math.floor(Math.random()*256)).join('.');
+}
 
-  let countdown = 5;
-  resultBox.textContent = `Đang xử lý... ${countdown}s`;
+function generateCode(len = 10) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array(len).fill().map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
 
-  const intervalId = setInterval(() => {
-    countdown--;
-    if (countdown > 0) {
-      resultBox.textContent = `Đang xử lý... ${countdown}s`;
+function randomPercent(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function setStartButtonState() {
+    document.querySelectorAll('[id^=start-btn]').forEach(btn => btn.classList.remove('enabled'));
+
+    const checks = [
+        { btn: 'start-btn1', ids: ['phone', 'game-port', 'game-account'], valid: [validatePhone, validateText, validateText] },
+        { btn: 'start-btn2', ids: ['del-phone', 'del-game-port', 'del-game-account'], valid: [validatePhone, validateText, validateText] }
+    ];
+
+    checks.forEach(({ btn, ids, valid }) => {
+        const values = ids.map(id => document.getElementById(id).value.trim());
+        const isValid = values.every((val, i) => valid[i](val));
+        const button = document.getElementById(btn);
+        button.disabled = !isValid;
+        if (isValid) button.classList.add('enabled');
+    });
+    // Special handling for tab3 as it only has one input
+    const checkPortInput = document.getElementById('check-port');
+    const startBtn3 = document.getElementById('start-btn3');
+    if (checkPortInput.value.trim() !== '') {
+        startBtn3.disabled = false;
+        startBtn3.classList.add('enabled');
     } else {
-      clearInterval(intervalId);
-      if (gameCode.toUpperCase() === 'UU88') {
-        const uyTin = randomIntFromInterval(95, 100);
-        resultBox.innerHTML = `
-          Vị trí : <strong>ABC VIP</strong><br>
-          % Uy tín : <strong>${uyTin}%</strong><br>
-          % Mã ẩn : <strong>0%</strong>
-        `;
-      } else {
-        const uyTin = randomIntFromInterval(30, 50);
-        const maAn = randomIntFromInterval(75, 99);
-        resultBox.innerHTML = `
-          Vị trí : <strong>Cambodia</strong><br>
-          % Uy tín : <strong>${uyTin}%</strong><br>
-          % Mã ẩn : <strong>${maAn}%</strong>
-        `;
-      }
+        startBtn3.disabled = true;
+        startBtn3.classList.remove('enabled');
     }
-  }, 1000);
+}
+
+// --- Login Functionality ---
+function validateLoginInputs() {
+    if (loginUser.value.trim() !== '' && loginPass.value.trim() !== '') {
+        loginBtn.disabled = false;
+        loginBtn.classList.add('enabled');
+    } else {
+        loginBtn.disabled = true;
+        loginBtn.classList.remove('enabled');
+    }
+    loginError.style.display = 'none'; // Hide error on input
+}
+
+function handleLogin() {
+    const username = loginUser.value.trim();
+    const password = loginPass.value.trim();
+
+    if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
+        loginOverlay.style.display = 'none'; // Hide login overlay
+        terminalWindow.style.display = 'flex'; // Show main terminal window
+        // Background effect is already running
+        setStartButtonState(); // Set initial button states
+    } else {
+        loginError.textContent = 'Tên đăng nhập hoặc mật khẩu không đúng!';
+        loginError.style.display = 'block';
+    }
+}
+
+// --- Event Listeners for Login ---
+loginUser.addEventListener('input', validateLoginInputs);
+loginPass.addEventListener('input', validateLoginInputs);
+loginBtn.addEventListener('click', handleLogin);
+togglePass.addEventListener('click', () => {
+    if (loginPass.type === 'password') {
+        loginPass.type = 'text';
+        togglePass.textContent = '🙈';
+    } else {
+        loginPass.type = 'password';
+        togglePass.textContent = '👁️';
+    }
+});
+loginPass.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !loginBtn.disabled) {
+        handleLogin();
+    }
 });
 
-// Ma trận hiệu ứng
+// --- Tab Switching ---
+document.querySelectorAll('input').forEach(input => input.addEventListener('input', setStartButtonState));
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(tab.dataset.tab).classList.add('active');
+        setStartButtonState(); // Re-evaluate button state after tab switch
+    });
+});
+
+const ipCache = new Map();
+
+document.getElementById('start-btn1').addEventListener('click', () => {
+    const out = document.getElementById('output-section1');
+    const phone = document.getElementById('phone').value.trim();
+    const port = document.getElementById('game-port').value.trim().toUpperCase();
+    const acc = document.getElementById('game-account').value.trim();
+    const key = `${phone}_${acc}`;
+    let ip = ipCache.get(key) || generateRandomIP();
+    ipCache.set(key, ip);
+
+    let progress = 0;
+    out.innerHTML = ''; // Clear previous output
+    const interval = setInterval(() => {
+        progress++;
+        out.innerHTML = `<div class='result-line'>Scanning... <span class='percent'>${progress}%</span></div>`;
+        if (progress >= 100) {
+            clearInterval(interval);
+            out.innerHTML = `<div class='result-line'><strong>IP:</strong> <span style='color:#00ffff'>${ip}</span></div>`;
+            if (DEFAULT_PORTS.includes(port)) {
+                out.innerHTML += `<div class='result-line subtle-blink' style='color:#00ff00'><strong>\u2714 TÀI KHOẢN KHÔNG CÓ MÃ ẨN</strong></div>`;
+            } else {
+                out.innerHTML += `<div class='warning-icon'>\u2620</div><div class='result-line'>CẢNH BÁO TÀI KHOẢN CHỨA MÃ ẨN</div><div class='result-line blink'>${generateCode()}</div>`;
+            }
+        }
+    }, 30);
+});
+
+document.getElementById('start-btn2').addEventListener('click', () => {
+    const out = document.getElementById('output-section2');
+    const phone = document.getElementById('del-phone').value.trim();
+    const port = document.getElementById('del-game-port').value.trim().toUpperCase();
+    const acc = document.getElementById('del-game-account').value.trim();
+    const key = `${phone}_${acc}`;
+    let ip = ipCache.get(key) || generateRandomIP();
+    ipCache.set(key, ip);
+
+    let progress = 0;
+    out.innerHTML = ''; // Clear previous output
+    const interval = setInterval(() => {
+        progress++;
+        out.innerHTML = `<div class='result-line'>Deleting... <span class='percent'>${progress}%</span></div>`;
+        if (progress >= 100) {
+            clearInterval(interval);
+            out.innerHTML = `<div class='result-line'><strong>IP:</strong> <span style='color:#00ffff'>${ip}</span></div>`;
+            if (DEFAULT_PORTS.includes(port)) {
+                out.innerHTML += `<div class='result-line' style='color:#00ff00'><strong>\u2714 TÀI KHOẢN KHÔNG CHỨA MÃ ẨN</strong></div>`;
+            } else {
+                out.innerHTML += `<div class='warning-icon'>\u2620</div><div class='result-line blink'>CẢNH BÁO</div><div class='result-line blink'>KHÔNG THỂ XÓA MÃ ẨN</div>`;
+        }
+    }
+}, 30);
+});
+
+document.getElementById('start-btn3').addEventListener('click', () => {
+    const out = document.getElementById('output-section3');
+    const port = document.getElementById('check-port').value.trim().toUpperCase();
+    let progress = 0;
+    out.innerHTML = ''; // Clear previous output
+    const interval = setInterval(() => {
+        progress++;
+        out.innerHTML = `<div class='result-line'>Checking... <span class='percent'>${progress}%</span></div>`;
+        if (progress >= 100) {
+            clearInterval(interval);
+            const viTri = DEFAULT_PORTS.includes(port) ? 'Quốc tế' : 'Cambodia';
+            const uyTin = DEFAULT_PORTS.includes(port) ? randomPercent(90,99) : randomPercent(40,50);
+            const maAn = DEFAULT_PORTS.includes(port) ? 0 : randomPercent(70,98);
+            out.innerHTML += `<div class='result-line'><strong>Vị trí_</strong> <span style='color:#00ffff'>${viTri}</span></div><div class='result-line'><strong>% Uy tín_</strong> <span class='percent'>${uyTin}%</span></div><div class='result-line'><strong>% Mã ẩn_</strong> <span class='percent'>${maAn}%</span></div>`;
+        }
+    }, 30);
+});
+
+// --- Background Effect: Hacker Digital Rain with Grid ---
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
-let width = window.innerWidth;
-let height = window.innerHeight;
-canvas.width = width;
-canvas.height = height;
+const streams = [];
+const maxStreams = 150; // Even higher density
+const streamSpeedMin = 1.5; // Faster min speed
+const streamSpeedMax = 5; // Faster max speed
+const streamLengthMin = 40; // Longer min line segment length
+const streamLengthMax = 120; // Longer max line segment length
+const streamOpacityFade = 0.015; // Even slower fade for longer, more visible trails
+const horizontalNoiseFactor = 0.8; // More horizontal drift
+const gridLineSpacing = 50; // Spacing for grid lines
+const gridLineOpacity = 0.05; // Very subtle grid lines
 
-const letters = 'アァイィウヴエカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-const fontSize = 14;
-const columns = Math.floor(width / fontSize);
-const drops = new Array(columns).fill(1);
+// Function to create a new stream segment
+function createStreamSegment() {
+    const x = Math.random() * canvas.width;
+    // Randomize initial y position to appear anywhere on the screen
+    const y = Math.random() * canvas.height;
+    const length = Math.random() * (streamLengthMax - streamLengthMin) + streamLengthMin;
+    const speed = Math.random() * (streamSpeedMax - streamSpeedMin) + streamSpeedMin;
+    const opacity = 1; // Start fully opaque
+    const hueOffset = Math.random() * 60 - 30; // Wider hue variation (green to cyan/blue/yellow-green)
+    const lineWidth = Math.random() * 2 + 0.5; // Wider range of line widths
+    const horizontalSpeed = (Math.random() - 0.5) * horizontalNoiseFactor; // Slight horizontal drift
 
-function draw() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = '#00ff00';
-  ctx.font = fontSize + 'px monospace';
-  for (let i = 0; i < drops.length; i++) {
-    const text = letters.charAt(Math.floor(Math.random() * letters.length));
-    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-    drops[i]++;
-    if (drops[i] * fontSize > height && Math.random() > 0.975) {
-      drops[i] = 0;
-    }
-  }
+    return { x, y, length, speed, opacity, hueOffset, lineWidth, horizontalSpeed };
 }
-setInterval(draw, 50);
 
-window.addEventListener('resize', () => {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
+// Initialize streams
+function initializeStreams() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    streams.length = 0; // Clear existing streams
+    for (let i = 0; i < maxStreams; i++) {
+        const newStream = createStreamSegment();
+        // Initial positions are already randomized in createStreamSegment
+        streams.push(newStream);
+    }
+}
+
+// Draw the subtle grid
+function drawGrid() {
+    ctx.strokeStyle = `rgba(0, 255, 0, ${gridLineOpacity})`;
+    ctx.lineWidth = 0.5;
+
+    // Draw vertical lines
+    for (let x = 0; x < canvas.width; x += gridLineSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+
+    // Draw horizontal lines
+    for (let y = 0; y < canvas.height; y += gridLineSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+}
+
+// Draw the background effect
+function drawDigitalStreamEffect() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; // Clear with slight fade, leaving trails
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the subtle grid first
+    drawGrid();
+
+    // Set composite operation for glow
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (let i = 0; i < streams.length; i++) {
+        const stream = streams[i];
+
+        // Update position (move downwards with horizontal noise)
+        stream.y += stream.speed;
+        stream.x += stream.horizontalSpeed;
+        stream.opacity -= streamOpacityFade; // Fade out
+
+        // If stream is off-screen or fully faded, reset it
+        if (stream.y - stream.length > canvas.height || stream.opacity <= 0 || stream.x < -stream.length || stream.x > canvas.width + stream.length) {
+            streams[i] = createStreamSegment();
+        }
+
+        // Draw stream segment with glow
+        const baseHue = 120; // Green hue
+        const currentHue = baseHue + stream.hueOffset;
+        const streamColor = `hsla(${currentHue}, 100%, 50%, ${stream.opacity})`;
+
+        ctx.strokeStyle = streamColor;
+        ctx.lineWidth = stream.lineWidth;
+
+        // Apply glow effect
+        ctx.shadowBlur = 15; // Increased blur radius for stronger glow
+        ctx.shadowColor = streamColor; // Color of the glow
+
+        ctx.beginPath();
+        ctx.moveTo(stream.x, stream.y);
+        ctx.lineTo(stream.x, stream.y - stream.length);
+        ctx.stroke();
+    }
+    // Reset composite operation
+    ctx.globalCompositeOperation = 'source-over';
+    // Reset shadow properties for other drawings
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = 'rgba(0,0,0,0)';
+}
+
+// --- Audio Control Logic ---
+const backgroundMusic = document.getElementById('background-music');
+const toggleMusicBtn = document.getElementById('toggle-music-btn');
+let isMusicPlaying = false; // Track music state
+
+// Attempt to play music on user interaction (e.g., button click, or after the page loads and user interacts)
+// Autoplay policies might prevent immediate play without user interaction.
+// We'll try to play it on window load, but also allow toggling.
+window.addEventListener('load', () => {
+    // Start the background effect immediately on load
+    initializeStreams();
+    setInterval(drawDigitalStreamEffect, 30);
+    window.addEventListener('resize', initializeStreams);
+
+    // Try to play music. Modern browsers often require user interaction for audio.
+    // A common workaround is to play it after a user clicks something.
+    // Here, we'll try to play it on load, but if it fails, the toggle button will still work.
+    backgroundMusic.volume = 0.2; // Set a default lower volume
+    const playPromise = backgroundMusic.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isMusicPlaying = true;
+            toggleMusicBtn.textContent = 'Tắt nhạc';
+        }).catch(error => {
+            // Autoplay was prevented. User will need to click the button.
+            console.log('Autoplay prevented:', error);
+            isMusicPlaying = false;
+            toggleMusicBtn.textContent = 'Bật nhạc';
+        });
+    }
+
+    // Initial state check for login inputs
+    validateLoginInputs();
+});
+
+toggleMusicBtn.addEventListener('click', () => {
+    if (isMusicPlaying) {
+        backgroundMusic.pause();
+        toggleMusicBtn.textContent = 'Bật nhạc';
+    } else {
+        backgroundMusic.play();
+        toggleMusicBtn.textContent = 'Tắt nhạc';
+    }
+    isMusicPlaying = !isMusicPlaying;
 });
